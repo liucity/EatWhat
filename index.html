@@ -1,0 +1,356 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="data:;base64,=">
+    <link href=".\css\font-awesome-4.4.0.min.css" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+        * { margin: 0; }
+        #list ul { 
+            list-style-type: none;
+            padding-left: 0;
+        }
+        #list ul li { cursor:pointer; color: #00777D; text-shadow: 0 1px 1px #54D4DA; border: 1px solid #ccc; border-bottom: none; padding: 5px; text-align: center;}
+        #list ul li:first-child { border-top-left-radius: 5px; border-top-right-radius: 5px;}
+        #list ul li:last-child { border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; border-bottom: 1px solid #ccc;}
+        #list ul li:hover { cursor:pointer; color: #54D4DA; text-shadow: none;}
+        #list ul li.active { color:#B7479E; }
+        button { border: 1px solid #C8B2E0; border-radius: 5px;
+                background: #5000A7; color: #FFF; box-shadow: 0 1px 1px 1px rgba(181, 125, 255, 0.5);
+                font-weight: bold; font-size: 1em;
+                padding: 5px 10px; cursor: pointer; }
+                button:hover { box-shadow: none;}
+
+        .btn { position: absolute; z-index: 1; color: rgb(0, 161, 255); font-size: 5em; text-shadow: 1px 1px 3px rgba(0, 161, 255, 0.25);}
+        .btn:hover { text-shadow: none;}
+        .oo { left:0; bottom: 0;}
+        .xx { right:0; bottom: 0;}
+                
+        .transition {
+            -webkit-transition: all 1s ease-in-out;
+            -moz-transition: all 1s ease-in-out;
+            transition: all 1s ease-in-out;
+        }
+        .transition.slow { transition-duration: 3s;}
+
+        #tab-list {padding:0; font-family:  'Times New Roman', Times, serif; font-weight: bold; color: white; cursor: pointer; position: absolute; z-index: 1;}
+        #tab-list:before,
+        #tab-list:after { display: table; content: " "; clear:both;box-sizing: border-box; }
+        #tab-list li.tab-list-item { float:left; padding: 2px 8px; position:relative; width:24px;
+            box-shadow: 0 1px 3px rgba(0, 161, 255, 0.5); border-bottom:none; 
+            background: rgb(0, 161, 255);margin-right: 1px; }
+        #tab-list li.tab-list-item:after {
+            content: " "; display: inline-block; position: absolute; z-index: 1; left: 0; top:100%;
+            border: 20px solid transparent; border-top: 15px solid rgb(0, 161, 255); 
+        }
+        #tab-list li.tab-list-item:hover { box-shadow: none;}
+        #tab-list li.tab-list-item.active { background: #F90; }
+        #tab-list li.tab-list-item.active:after { border-top-color: #F90;}
+
+        #rotate-card-box { text-align:center; width:100px; height:100px; margin:50px 0 ; display:inline-block; transform-style: preserve-3d; position: relative;user-select: none;transform-origin: 50% 25px;  }
+        .rotate-card{ height:50px; width:100%; display:inline-block; position: absolute; left:0; !backface-visibility:hidden; transform-origin: 50% 25px; line-height:50px; color:#FFF; font-weight:bold;}
+        .rotate-card:first-child{ background:-webkit-gradient(linear, left top, left bottom, from(#780000), to(#fff)); transform: translate3d(0, 0, 43px) rotateX(0deg); }
+        .rotate-card:nth-child(2){ background:-webkit-gradient(linear, left top, left bottom, from(#007800), to(#fff)); transform: translate3d(0, -37.5px, 21.6px) rotateX(60deg) ;}
+        .rotate-card:nth-child(3){ background:-webkit-gradient(linear, left top, left bottom, from(#000078), to(#fff)); transform: translate3d(0, -37.5px, -21.6px) rotateX(120deg) ;}
+        .rotate-card:nth-child(4){ background:-webkit-gradient(linear, left top, left bottom, from(#AAA000), to(#fff)); transform: translate3d(0, 0, -43px) rotateX(180deg) ;}
+        .rotate-card:nth-child(5){ background:-webkit-gradient(linear, left top, left bottom, from(#00AAA0), to(#fff)); transform: translate3d(0, 37.5px, -21.6px) rotateX(240deg) ;}
+        .rotate-card:nth-child(6){ background:-webkit-gradient(linear, left top, left bottom, from(#A000AA), to(#fff)); transform: translate3d(0, 37.5px, 21.6px) rotateX(300deg) ;}
+    </style>
+</head>
+
+<body style="height:100%; text-align:center;">
+    <div id="rotate-control" style="margin: 0 auto;display:none; ">
+        <div id="rotate-card-box" class="transition slow" style="transform:rotateX(0deg);">
+            <div class="rotate-card">#1</div>
+            <div class="rotate-card">#2</div>
+            <div class="rotate-card">#3</div>
+            <div class="rotate-card">#4</div>
+            <div class="rotate-card">#5</div>
+            <div class="rotate-card">#6</div>
+        </div>
+    </div>
+    <div style="overflow:hidden; position:relative; text-align:center;">
+        <div id="canvas-control" style="display:inline-block; cursor: pointer; position:relative;">
+            <ul id="tab-list" class="transition" style="left:50%;">
+                <li class="tab-list-item active">早</li>
+                <li class="tab-list-item">点心</li>
+                <li class="tab-list-item">中</li>
+                <li class="tab-list-item">晚</li>
+                <li class="tab-list-item">夜宵</li>
+                <li class="tab-list-item" style="display:none;">+</li>
+            </ul>
+            <canvas id="canvas" width="400px" height="400px" class="transition slow"></canvas>
+            <span class="fa fa-thumbs-up btn oo" data-type="oo"></span>
+            <span class="fa fa-thumbs-down btn xx" data-type="xx"></span>
+        </div>
+    </div>
+    <div id="item-list" style="margin-top:5px;display:none;">
+    </div>
+    <button id="dbtest">新菜单</button>
+    <input type="text" id="dinner" placeholder="Name"/>
+    <button id="add">加入豪华菜单</button>
+</body>
+
+
+<script src=".\script\jquery-2.1.4.min.js" type="text/javascript"></script>
+<script src=".\script\canvas.js" type="text/javascript"></script>
+<script src=".\script\extend.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function(){
+         myCanvas = new XT.canvas({
+            dom: document.getElementById('canvas'),
+            lineWidth: 2,
+            font: 'bold 16px Segoe UI',
+            randomColor: function () {
+                var color = CL.math.random(16777215).toString(16);
+                var l = 6 - color.length;
+                while (l--) {
+                    color = '0' + color;
+                }
+                return '#' + color;
+            },
+            getColor: (function(){
+                var darkColorReg = /#[0-8]{6}/i
+                return function(){
+                    var color;
+                    while(!darkColorReg.test(color = this.randomColor())){}
+                    return color;
+                }
+            })(),
+            render: function(){
+                var ctx = this.getContext(),
+                    result = false;
+                    
+                this.clean();
+                if(this.items){
+                    this.items.sort('lineColor').each(function(){
+                        if(XT.tool.isFunction(this.render)){
+                            result = result || this.render(ctx) !== false;
+                        }
+                    })
+                }
+                return result;
+            },
+            event: function(type, item, e){
+                switch(type){
+                    case 'mouseenter': 
+                    case 'touchenter':
+                        item.lineColor = '#F90';
+                        break;
+                    case 'mouseleave': 
+                    case 'touchleave':
+                        !item.selected && delete item.lineColor;
+                        break;
+                }
+            }
+        })
+
+        var manager = {
+            getSize: function(){
+                return Math.min($(window).height(), $(window).width()) - 50;
+            },
+            load: function(){
+                $.post('/query', {
+                    tab: $('#tab-list li.active').html()
+                }).done(function(rst){
+                    manager.prepareList(rst);
+                })
+            },
+            getShare: function(item){
+                return Math.max(item ? item.oo - item.xx : 0, 1);
+            },
+            prepareList: function (rst) {
+                //prepare
+                var linqRst = new XT.linq(rst);
+                var r = myCanvas.dom.width / 2;
+                var totalShare = linqRst.sum(function(){
+                    return manager.getShare(this);
+                }) || 1;
+                var pa = Math.PI * 2 / totalShare;
+                var space = 5;
+                var share = - manager.getShare(linqRst.eq(0)) / 2;
+                myCanvas.items = linqRst.select(function(item, i){
+                    return {
+                        id: item.id,
+                        type: 'pie',
+                        name: item.name,
+                        index: i,
+                        radius: r - space,
+                        space: space,
+                        startArg: pa * (share),
+                        endArg: pa * ((share += manager.getShare(this))),
+                        share: manager.getShare(this),
+                        total: totalShare,
+                        color: item.color || myCanvas.getColor(),
+                        render: function(ctx){
+                            ctx.save();
+                            ctx.translate(this.radius + this.space, this.radius + this.space);
+                            myCanvas.pie(0, 0, this.radius, this.startArg, this.endArg, {
+                                color: this.color,
+                                lineColor: this.lineColor,
+                                lineWidth: this.lineWidth
+                            });
+                            ctx.rotate((this.startArg + this.endArg) / 2);
+                            myCanvas.text(0, 75 - this.radius, this.name, {color: '#FFFFFF', font: '3em bold'});
+                            ctx.restore();
+
+                            return false;
+                        },
+                        inRange: function(x, y){
+                            var dx = x - this.radius - this.space,
+                                dy = y - this.radius - this.space,
+                                a = Math.atan2(dy,dx) + Math.PI / 2 + pa / 2;
+                                
+                            if(a < 0) {
+                                a += 2 * Math.PI;
+                            }
+                            return this.endArg + pa / 2> a && this.startArg + pa / 2< a && Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)) <= this.radius;
+                        }
+                    }
+                });
+                myCanvas.draw();
+                
+                var html = XT.tool.replacer('<li data-id="{name}">{name}</li>', myCanvas.items);
+                $('#item-list').html('<ul>' + html + '</ul>');
+            }
+        }
+
+        var time;
+        $('#canvas-control').on('mousedown touchstart', function(){
+            time = XT.canvas.prototype.getTime();
+        }).on('mouseup touchend', function(){
+            if(!myCanvas.items || !myCanvas.items.count()) {
+                alert('加点菜嘞!')
+                return false;
+            }
+            //clean selected color
+            myCanvas.items.each(function(){
+                if(this.lineColor) {
+                    delete this.lineColor;
+                    delete this.lineWidth;
+                    delete this.selected;
+                }
+            });
+            myCanvas.draw();
+            $.post('/random', { data: JSON.stringify(myCanvas.items.array())}).done(function(rst){
+                $('#item-list li[data-id="' + rst.name + '"]').addClass('active')
+                    .siblings('.active').removeClass('active');
+                  
+                var arc = (/transform: rotate\((\d+)deg\);/i.exec($('#canvas').attr('style')) || [])[1] || 0;
+                var r = - (rst.startArg + rst.endArg) / Math.PI * 90;
+                var turns = Math.ceil(arc / 360) + Math.max(Math.floor((XT.canvas.prototype.getTime() - time) / 1000 * 3), (arc % 360 || 360)> 360 + r ? 2 : 1);
+
+                $('#canvas').css('transform', 'rotate(' + Math.round(r + turns * 360)+ 'deg)');
+                $('#canvas').data('selected', rst);
+            })
+        })
+        
+        $('#canvas').on('transitionend oTransitionEnd transitionend webkitTransitionEnd', function(){
+            var rst = $('#canvas').data('selected');
+            //render selected color after effect end
+            if(rst){
+                var selected = myCanvas.items.first(function(){
+                    return this.name === rst.name;
+                }) || {}
+                selected.lineColor = '#F90';
+                selected.lineWidth = 4;
+                selected.selected = true;
+                myCanvas.draw();
+            }
+        });
+        
+        $('#dbtest').on('click', function(){
+            //clean items on board
+            $.post('/clean', {
+                tab: $('#tab-list li.active').html()
+            }).done(function(rst){
+                manager.load();
+            })
+        });
+        
+        $('#add').on('click', function(){
+            //add new item
+            var name = $('#dinner').val();
+            if(!name) return false;
+            $.post('/add', { data: JSON.stringify({
+                tab: $('#tab-list li.active').html(),
+                name: name,
+                color: myCanvas.getColor()
+            })}).done(function(rst){
+                $('#dinner').val('');
+                manager.load();
+            })
+        });
+        
+        $('#dinner').on('keydown', function(e){
+            if(e.keyCode === 13){
+                $('#add').trigger('click');
+            }
+        })
+
+        //oo xx
+        $('.btn').on('mouseup touchend', function(){
+            var type = $(this).data('type');
+            var rst = $('#canvas').data('selected');
+            
+            if(rst){
+                $.post('/' + type, { data: JSON.stringify({
+                    id: rst.id
+                })}).done(function(rst){
+                    console.log(type + ' success, Thank you!');
+                })
+                $('#canvas').removeData('selected');
+            }
+            return false;
+        })
+
+        //marker
+        $('#tab-list').on('mouseup touchend', 'li', function(){
+            var item = $(this);
+            item.addClass('active').siblings('.active').removeClass('active');
+            $('#tab-list').css('left', manager.getSize() / 2 - item.outerWidth() * (item.prevAll().length + 0.5) - 4);
+            $('#canvas').removeData('selected')
+            manager.load();
+            return false;
+        })
+        
+        $(window).on('resize', function(e){
+            var size = manager.getSize();
+            $('#canvas').attr({
+                width: size,
+                height: size
+            })
+            $('#tab-list li.active').trigger('mouseup');
+        }).trigger('resize');
+
+        var temp = false;
+        $('#rotate-control').on('mousedown', function(e){
+            var style = $('#rotate-card-box').attr('style');
+            temp = {
+                x: (getTransform('rotateX', style) || 0) - e.clientY,
+                y: (getTransform('rotateY', style) || 0) - e.clientX,
+                mx: e.clientX,
+                my: e.clientY
+            };
+        }).on('mouseup', function(e){
+            if(temp !== false && (Math.abs(temp.mx - e.clientX) < 10 && Math.abs(temp.my - e.clientY) < 10)){
+                var arc = getTransform('rotateX', $('#rotate-card-box').attr('style')) || 0;
+                $('#rotate-card-box').css('transform', 'rotateX(' + (Math.floor(arc / 360 + 13) * 360 + Math.floor(Math.random() * 6) * 60 + 30)+ 'deg)');
+            }
+        })
+        $(window).on('mousemove', function(e){
+            if(temp !== false) {
+                $('#rotate-card-box').css('transform', 'rotateY(' + (temp.y + e.clientX) + 'deg) rotateX(' + (temp.x + e.clientY)+ 'deg)');
+            }
+        }).on('mouseup', function(e){
+            temp = false;
+        })
+
+        var getTransform = function(key, style){
+            var reg = new RegExp(key + '\\((\\-?\\d+(?:\\.\\d+)?)(?:deg)\\)', 'i');
+            var value = (reg.exec(style) || [])[1];
+            return value;
+        }
+    })
+</script>
+
+</html>
